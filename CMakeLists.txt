@@ -8,6 +8,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(Vulkan REQUIRED)
 find_package(glfw3 REQUIRED)
 
-add_executable(pyroVis main.cpp)
+include_directories(${Vulkan_INCLUDE_DIRS})
+include_directories(${GLFW_INCLUDE_DIRS})
 
-target_link_libraries(PyroVis PRIVATE Vulkan::Vulkan glfw)
+add_executable(pyroVis main.cpp window.cpp application.cpp)
+
+target_link_libraries(pyroVis PRIVATE Vulkan::Vulkan glfw)
