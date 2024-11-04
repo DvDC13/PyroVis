@@ -16,6 +16,12 @@ namespace Pyro {
         return glfwWindowShouldClose(window_);
     }
 
+    void Window::createWindowSurface(VkInstance instance, VkSurfaceKHR* surface) {
+        if (glfwCreateWindowSurface(instance, window_, nullptr, surface) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create window surface!");
+        }
+    }
+
     void Window::init() {
         glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);

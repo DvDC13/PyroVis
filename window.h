@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include <string>
+#include <stdexcept>
 
 namespace Pyro
 {
@@ -19,6 +20,8 @@ namespace Pyro
         Window& operator=(Window&&) = delete;
 
         bool isClosed();
+
+        void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
 
     private:
         GLFWwindow* window_;
