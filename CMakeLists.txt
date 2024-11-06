@@ -11,6 +11,6 @@ find_package(glfw3 REQUIRED)
 include_directories(${Vulkan_INCLUDE_DIRS})
 include_directories(${GLFW_INCLUDE_DIRS})
 
-add_executable(pyroVis main.cpp window.cpp application.cpp pipeline.cpp device.cpp)
+add_executable(pyroVis main.cpp window.cpp application.cpp pipeline.cpp device.cpp swap_chain.cpp)
 
 target_link_libraries(pyroVis PRIVATE Vulkan::Vulkan glfw)

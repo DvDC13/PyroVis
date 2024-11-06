@@ -23,6 +23,8 @@ namespace Pyro
 
         void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
 
+        VkExtent2D getExtent() const;
+
     private:
         GLFWwindow* window_;
         const int width_;

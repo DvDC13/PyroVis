@@ -22,6 +22,11 @@ namespace Pyro {
         }
     }
 
+    VkExtent2D Window::getExtent() const
+    {
+        return {static_cast<uint32_t>(width_), static_cast<uint32_t>(height_)};
+    }
+
     void Window::init() {
         glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
