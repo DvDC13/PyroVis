@@ -1,6 +1,5 @@
 #include "device.h"
 
-// std headers
 #include <cstring>
 #include <iostream>
 #include <set>
@@ -8,7 +7,6 @@
 
 namespace Pyro {
 
-// local callback functions
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
     VkDebugUtilsMessageTypeFlagsEXT messageType,
