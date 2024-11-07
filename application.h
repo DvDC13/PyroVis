@@ -29,6 +29,7 @@ namespace Pyro
     private:
         void createPipelineLayout();
         void createPipeline();
+        void recordCommandBuffers();
         void createCommandBuffers();
         void drawFrame();
 

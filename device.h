@@ -67,9 +67,6 @@ class Device {
   bool checkDeviceExtensionSupport(VkPhysicalDevice device);
   SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 
-  // TODO: Add chooseSwapSurfaceFormat and chooseSwapPresentMode and chooseSwapExtent and createSwapChain
-  // TODO: Add createImageView
-
   VkInstance instance_;
   VkDebugUtilsMessengerEXT debugMessenger_;
   VkPhysicalDevice physicalDevice_ = VK_NULL_HANDLE;

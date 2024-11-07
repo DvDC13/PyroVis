@@ -66,7 +66,7 @@ class SwapChain {
   std::vector<VkSemaphore> imageAvailableSemaphores_;
   std::vector<VkSemaphore> renderFinishedSemaphores_;
   std::vector<VkFence> inFlightFences_;
-  std::vector<VkFence> imagesInFlight_;
+
   size_t currentFrame_ = 0;
 };
 
