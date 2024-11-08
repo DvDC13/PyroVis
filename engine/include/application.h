@@ -27,6 +27,7 @@ namespace Pyro
         void run();
         
     private:
+        void loadVertexBuffer();
         void createPipelineLayout();
         void createPipeline();
         void recordCommandBuffers();
@@ -39,5 +40,6 @@ namespace Pyro
         std::unique_ptr<Pipeline> pipeline_;
         VkPipelineLayout pipelineLayout_;
         std::vector<VkCommandBuffer> commandBuffers_;
+        std::unique_ptr<VertexBuffer> vertexBuffer_;
     };
 }

@@ -5,6 +5,7 @@ namespace Pyro
 
     Application::Application()
     {
+        loadVertexBuffer();
         createPipelineLayout();
         createPipeline();
         createCommandBuffers();
@@ -24,6 +25,17 @@ namespace Pyro
         }
 
         vkDeviceWaitIdle(device_.device());
+    }
+
+    void Application::loadVertexBuffer()
+    {
+        std::vector<Vertex> vertices = {
+            {{-0.0f, -0.5f}},
+            {{0.5f, 0.5f}},
+            {{-0.5f, 0.5f}},
+        };
+
+        vertexBuffer_ = std::make_unique<VertexBuffer>(device_, vertices);
     }
 
     void Application::createPipelineLayout()
@@ -84,7 +96,8 @@ namespace Pyro
 
             pipeline_->bind(commandBuffers_[i]);
 
-            vkCmdDraw(commandBuffers_[i], 3, 1, 0, 0);
+            vertexBuffer_->bind(commandBuffers_[i]);
+            vertexBuffer_->draw(commandBuffers_[i]);
 
             vkCmdEndRenderPass(commandBuffers_[i]);
 

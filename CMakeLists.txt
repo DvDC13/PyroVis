@@ -7,6 +7,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Vulkan REQUIRED)
 find_package(glfw3 REQUIRED)
+find_package(glm REQUIRED)
 
 include_directories(${Vulkan_INCLUDE_DIRS})
 include_directories(${GLFW_INCLUDE_DIRS})
@@ -18,4 +19,4 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/engine/include)
 
 add_executable(pyroVis main.cpp)
 
-target_link_libraries(pyroVis engine ${Vulkan_LIBRARIES} glfw)
+target_link_libraries(pyroVis engine ${Vulkan_LIBRARIES} glfw glm::glm)
