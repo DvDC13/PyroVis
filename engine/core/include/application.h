@@ -4,6 +4,7 @@
 #include "pipeline.h"
 #include "device.h"
 #include "swap_chain.h"
+#include "logger.h"
 
 #include <memory>
 #include <array>

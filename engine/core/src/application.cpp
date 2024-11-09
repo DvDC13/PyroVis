@@ -5,6 +5,9 @@ namespace Pyro
 
     Application::Application()
     {
+        Logger logger;
+        logger.log(Logger::LogLevel::INFO, "Application started");
+
         loadVertexBuffer();
         createPipelineLayout();
         recreateSwapChain();
