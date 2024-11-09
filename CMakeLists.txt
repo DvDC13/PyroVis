@@ -15,7 +15,7 @@ include_directories(${GLFW_INCLUDE_DIRS})
 add_library(engine STATIC)
 target_include_directories(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/engine)
 add_subdirectory(engine)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/engine/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/engine/core/include)
 
 add_executable(pyroVis main.cpp)
 
