@@ -20,17 +20,23 @@ namespace Pyro
         Window& operator=(Window&&) = delete;
 
         bool isClosed();
+        bool wasWindowResized();
+        void resetWindowResizedFlag();
 
         void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
 
         VkExtent2D getExtent() const;
 
     private:
+
         GLFWwindow* window_;
-        const int width_;
-        const int height_;
+        int width_;
+        int height_;
+        bool framebufferResized_;
         std::string windowName_;
 
+
+        static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
         void init();
     };
 }

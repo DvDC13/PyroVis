@@ -30,13 +30,15 @@ namespace Pyro
         void loadVertexBuffer();
         void createPipelineLayout();
         void createPipeline();
-        void recordCommandBuffers();
+        void recordCommandBuffer(int imageIndex);
         void createCommandBuffers();
+        void freeCommandBuffers();
         void drawFrame();
+        void recreateSwapChain();
 
         Window window_{WIDTH, HEIGHT, "PyroVis"};
         Device device_{window_};
-        SwapChain swapChain_{device_, window_.getExtent()};
+        std::unique_ptr<SwapChain> swapChain_;
         std::unique_ptr<Pipeline> pipeline_;
         VkPipelineLayout pipelineLayout_;
         std::vector<VkCommandBuffer> commandBuffers_;

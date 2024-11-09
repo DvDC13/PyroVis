@@ -13,9 +13,11 @@ namespace Pyro
 {
     struct PipelineConfigInfo
     {
-        VkViewport viewport;
-        VkRect2D scissor;
+        PipelineConfigInfo() = default;
+        PipelineConfigInfo(const PipelineConfigInfo& other) = default;
+        PipelineConfigInfo& operator=(const PipelineConfigInfo& other) = default;
         
+        VkPipelineViewportStateCreateInfo viewportInfo;
         VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
         VkPipelineRasterizationStateCreateInfo rasterizationInfo;
         VkPipelineMultisampleStateCreateInfo multisampleInfo;
@@ -25,6 +27,9 @@ namespace Pyro
         VkPipelineLayout pipelineLayout = VK_NULL_HANDLE;
         VkRenderPass renderPass = VK_NULL_HANDLE;
         uint32_t subpass = 0;
+
+        std::vector<VkDynamicState> dynamicStateEnables;
+        VkPipelineDynamicStateCreateInfo dynamicStateInfo;
     };
 
     class Pipeline
@@ -40,7 +45,7 @@ namespace Pyro
 
         void bind(VkCommandBuffer commandBuffer);
 
-        static PipelineConfigInfo defaultPipelineConfigInfo(uint32_t width, uint32_t height);
+        static void defaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
 
     private:
         Device& device_;

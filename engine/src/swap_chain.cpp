@@ -12,12 +12,14 @@ namespace Pyro {
 
 SwapChain::SwapChain(Device &deviceRef, VkExtent2D extent)
     : device_{deviceRef}, windowExtent_{extent} {
-  createSwapChain();
-  createImageViews();
-  createRenderPass();
-  createDepthResources();
-  createFramebuffers();
-  createSyncObjects();
+  init();
+}
+
+SwapChain::SwapChain(Device &deviceRef, VkExtent2D extent, std::shared_ptr<SwapChain> previous)
+    : device_{deviceRef}, windowExtent_{extent}, oldSwapChain_{previous} {
+    
+  init();
+  oldSwapChain_ = nullptr;
 }
 
 SwapChain::~SwapChain() {
@@ -103,6 +105,15 @@ VkResult SwapChain::submitCommandBuffers(const VkCommandBuffer *buffers, uint32_
   return result;
 }
 
+void SwapChain::init() { 
+  createSwapChain();
+  createImageViews();
+  createRenderPass();
+  createDepthResources();
+  createFramebuffers();
+  createSyncObjects();
+}
+
 void SwapChain::createSwapChain() {
   SwapChainSupportDetails swapChainSupport = device_.getSwapChainSupport();
 
@@ -145,7 +156,7 @@ void SwapChain::createSwapChain() {
   createInfo.presentMode = presentMode;
   createInfo.clipped = VK_TRUE;
 
-  createInfo.oldSwapchain = VK_NULL_HANDLE;
+  createInfo.oldSwapchain = oldSwapChain_ ? oldSwapChain_->swapChain_ : VK_NULL_HANDLE;
 
   if (vkCreateSwapchainKHR(device_.device(), &createInfo, nullptr, &swapChain_) != VK_SUCCESS) {
     throw std::runtime_error("failed to create swap chain!");
@@ -314,7 +325,6 @@ void SwapChain::createSyncObjects() {
   imageAvailableSemaphores_.resize(MAX_FRAMES_IN_FLIGHT);
   renderFinishedSemaphores_.resize(MAX_FRAMES_IN_FLIGHT);
   inFlightFences_.resize(MAX_FRAMES_IN_FLIGHT);
-  //imagesInFlight_.resize(imageCount(), VK_NULL_HANDLE);
 
   VkSemaphoreCreateInfo semaphoreInfo = {};
   semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
