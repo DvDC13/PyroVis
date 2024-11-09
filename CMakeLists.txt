@@ -11,7 +11,7 @@ find_package(glm REQUIRED)
 
 include_directories(${Vulkan_INCLUDE_DIRS})
 include_directories(${GLFW_INCLUDE_DIRS})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/engine/core)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/engine/utils)
 
 add_library(engine STATIC)
 target_include_directories(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/engine)
