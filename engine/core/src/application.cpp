@@ -43,12 +43,17 @@ namespace Pyro
 
     void Application::createPipelineLayout()
     {
+        VkPushConstantRange pushConstantRange{};
+        pushConstantRange.size = sizeof(PushConstants);
+        pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+        pushConstantRange.offset = 0;
+
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
         pipelineLayoutInfo.setLayoutCount = 0;
         pipelineLayoutInfo.pSetLayouts = nullptr;
-        pipelineLayoutInfo.pushConstantRangeCount = 0;
-        pipelineLayoutInfo.pPushConstantRanges = nullptr;
+        pipelineLayoutInfo.pushConstantRangeCount = 1;
+        pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 
         if (vkCreatePipelineLayout(device_.device(), &pipelineLayoutInfo, nullptr, &pipelineLayout_) != VK_SUCCESS)
         {
@@ -89,7 +94,7 @@ namespace Pyro
         renderPassInfo.renderArea.extent = swapChain_->getSwapChainExtent();
 
         std::array<VkClearValue, 2> clearValues{};
-        clearValues[0].color = {0.1f, 0.1f, 0.1f, 1.0f};
+        clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
         clearValues[1].depthStencil = {1.0f, 0};
 
         renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
@@ -115,7 +120,22 @@ namespace Pyro
         pipeline_->bind(commandBuffers_[imageIndex]);
 
         vertexBuffer_->bind(commandBuffers_[imageIndex]);
-        vertexBuffer_->draw(commandBuffers_[imageIndex]);
+
+        for (int i = 0; i < 4; i++) {
+            PushConstants push{};
+            push.offset = glm::vec2(0.0f,-0.4f + 0.25f * i);
+            push.color = glm::vec3(0.0f, 0.0f, 0.2f + 0.2f * i);
+
+            vkCmdPushConstants(commandBuffers_[imageIndex],
+                            pipelineLayout_,
+                            VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+                            0,
+                            sizeof(PushConstants),
+                            &push
+                            );
+
+            vertexBuffer_->draw(commandBuffers_[imageIndex]);
+        }
 
         vkCmdEndRenderPass(commandBuffers_[imageIndex]);
 

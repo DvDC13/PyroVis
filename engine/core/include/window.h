@@ -35,7 +35,6 @@ namespace Pyro
         bool framebufferResized_;
         std::string windowName_;
 
-
         static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
         void init();
     };
