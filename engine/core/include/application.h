@@ -5,6 +5,7 @@
 #include "device.h"
 #include "swap_chain.h"
 #include "logger.h"
+#include "game_object.h"
 
 #include <memory>
 #include <array>
@@ -17,6 +18,7 @@ namespace Pyro
 
     struct PushConstants
     {
+        glm::mat2 transform{1.0f};
         glm::vec2 offset;
         alignas(16) glm::vec3 color;
     };
@@ -35,7 +37,7 @@ namespace Pyro
         void run();
         
     private:
-        void loadVertexBuffer();
+        void loadGameObjects();
         void createPipelineLayout();
         void createPipeline();
         void recordCommandBuffer(int imageIndex);
@@ -43,6 +45,7 @@ namespace Pyro
         void freeCommandBuffers();
         void drawFrame();
         void recreateSwapChain();
+        void renderGameObjects(VkCommandBuffer commandBuffer);
 
         Window window_{WIDTH, HEIGHT, "PyroVis"};
         Device device_{window_};
@@ -50,6 +53,6 @@ namespace Pyro
         std::unique_ptr<Pipeline> pipeline_;
         VkPipelineLayout pipelineLayout_;
         std::vector<VkCommandBuffer> commandBuffers_;
-        std::unique_ptr<VertexBuffer> vertexBuffer_;
+        std::vector<GameObject> gameObjects_;
     };
 }

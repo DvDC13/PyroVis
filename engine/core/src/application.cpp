@@ -8,7 +8,7 @@ namespace Pyro
         Logger logger;
         logger.log(Logger::LogLevel::INFO, "Application started");
 
-        loadVertexBuffer();
+        loadGameObjects();
         createPipelineLayout();
         recreateSwapChain();
         createCommandBuffers();
@@ -30,7 +30,7 @@ namespace Pyro
         vkDeviceWaitIdle(device_.device());
     }
 
-    void Application::loadVertexBuffer()
+    void Application::loadGameObjects()
     {
         std::vector<Vertex> vertices = {
             {{-0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
@@ -38,7 +38,16 @@ namespace Pyro
             {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
         };
 
-        vertexBuffer_ = std::make_unique<VertexBuffer>(device_, vertices);
+        auto vertexBuffer_ = std::make_shared<VertexBuffer>(device_, vertices);
+
+        auto triangle = GameObject::create();
+        triangle.vertexBuffer_ = vertexBuffer_;
+        triangle.color_ = {1.0f, 0.0f, 0.0f};
+        triangle.transform2D_.translation.x = 0.2f;
+        triangle.transform2D_.scale = {0.2f, 0.5f};
+        triangle.transform2D_.rotation = 0.25f * glm::two_pi<float>();
+
+        gameObjects_.push_back(std::move(triangle));
     }
 
     void Application::createPipelineLayout()
@@ -73,8 +82,6 @@ namespace Pyro
     }
 
     void Application::recordCommandBuffer(int imageIndex) {
-
-        vkResetCommandBuffer(commandBuffers_[imageIndex], 0);
 
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -117,25 +124,7 @@ namespace Pyro
         vkCmdSetViewport(commandBuffers_[imageIndex], 0, 1, &viewport);
         vkCmdSetScissor(commandBuffers_[imageIndex], 0, 1, &scissor);
 
-        pipeline_->bind(commandBuffers_[imageIndex]);
-
-        vertexBuffer_->bind(commandBuffers_[imageIndex]);
-
-        for (int i = 0; i < 4; i++) {
-            PushConstants push{};
-            push.offset = glm::vec2(0.0f,-0.4f + 0.25f * i);
-            push.color = glm::vec3(0.0f, 0.0f, 0.2f + 0.2f * i);
-
-            vkCmdPushConstants(commandBuffers_[imageIndex],
-                            pipelineLayout_,
-                            VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-                            0,
-                            sizeof(PushConstants),
-                            &push
-                            );
-
-            vertexBuffer_->draw(commandBuffers_[imageIndex]);
-        }
+        renderGameObjects(commandBuffers_[imageIndex]);
 
         vkCmdEndRenderPass(commandBuffers_[imageIndex]);
 
@@ -213,5 +202,28 @@ namespace Pyro
         }
 
         createPipeline();
+    }
+
+    void Application::renderGameObjects(VkCommandBuffer commandBuffer) {
+        pipeline_->bind(commandBuffer);
+
+        for (auto& object : gameObjects_) { 
+            
+            PushConstants push{};
+            push.offset = object.transform2D_.translation;
+            push.color = object.color_;
+            push.transform = object.transform2D_.mat2();
+
+            vkCmdPushConstants(commandBuffer,
+                            pipelineLayout_,
+                            VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+                            0,
+                            sizeof(PushConstants),
+                            &push
+                            );
+            
+            object.vertexBuffer_->bind(commandBuffer);
+            object.vertexBuffer_->draw(commandBuffer);
+        }
     }
 }
