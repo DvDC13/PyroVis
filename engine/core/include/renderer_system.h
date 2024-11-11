@@ -12,8 +12,7 @@ namespace Pyro
 {
     struct PushConstants
     {
-        glm::mat2 transform{1.0f};
-        glm::vec2 offset;
+        glm::mat4 transform{1.0f};
         alignas(16) glm::vec3 color;
     };
 

@@ -3,17 +3,25 @@
 #include "vertex_buffer.h"
 #include <memory>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace Pyro
 {
-    struct Transform2D
+    struct Transform
     {
-        glm::vec2 translation{};
-        glm::vec2 scale{1.0f};
-        float rotation{0.0f};
-        glm::mat2 mat2() const {
-            glm::mat2 m_rot = glm::mat2(cos(rotation), sin(rotation), -sin(rotation), cos(rotation)); 
-            glm::mat2 m_scale = glm::mat2(scale.x, 0.0f, 0.0f, scale.y);
-            return m_rot * m_scale;
+        glm::vec3 translation{};
+        glm::vec3 scale{1.0f};
+        glm::vec3 rotation{0.0f};
+
+        // translate * rotatex * rotatey * rotatez * scale
+        // Y(1) X(2) Z(3) tait-bryan angles
+        glm::mat4 mat4() const {
+            auto transform = glm::translate(glm::mat4(1.0f), translation);
+            transform = glm::rotate(transform, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+            transform = glm::rotate(transform, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+            transform = glm::rotate(transform, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+            transform = glm::scale(transform, scale);
+            return transform;
         }
     };
 
@@ -34,7 +42,7 @@ namespace Pyro
 
         std::shared_ptr<VertexBuffer> vertexBuffer_{};
         glm::vec3 color_{};
-        Transform2D transform2D_{};
+        Transform transform_{};
 
     private:
         GameObject(unsigned int id) : id_(id) {}

@@ -10,6 +10,8 @@
 #include <memory>
 #include <array>
 
+#include <glm/glm.hpp>
+
 #define WIDTH 800
 #define HEIGHT 600
 

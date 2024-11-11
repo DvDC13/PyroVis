@@ -20,9 +20,8 @@ namespace Pyro
         for (auto& object : gameObjects) { 
             
             PushConstants push{};
-            push.offset = object.transform2D_.translation;
             push.color = object.color_;
-            push.transform = object.transform2D_.mat2();
+            push.transform = object.transform_.mat4();
 
             vkCmdPushConstants(commandBuffer,
                             pipelineLayout_,
