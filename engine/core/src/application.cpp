@@ -77,13 +77,19 @@ namespace Pyro
     {
         RendererSystem rendererSystem(device_, renderer_.getSwapChainRenderPass());
 
+        Camera camera{};
+
         while (!window_.isClosed())
         {
             glfwPollEvents();
+
+            float aspect = renderer_.getAspectRatio();
+            //camera.setOrthographicProjection(-aspect, aspect, -1.0f, 1.0f, -1.0f, 1.0f);
+            camera.setPerspectiveProjection(50.0f, aspect, 0.1f, 10.0f);
             
             if (auto commandBuffer = renderer_.beginFrame()) {
                 renderer_.beginSwapChainRenderPass(commandBuffer);
-                rendererSystem.renderGameObjects(commandBuffer, gameObjects_);
+                rendererSystem.renderGameObjects(commandBuffer, gameObjects_, camera);
                 renderer_.endSwapChainRenderPass(commandBuffer);
                 renderer_.endFrame();
             }
@@ -98,7 +104,7 @@ namespace Pyro
 
         auto cube = GameObject::create();
         cube.vertexBuffer_ = vertexBuffer;
-        cube.transform_.translation = glm::vec3(0.0f, 0.0f, 0.5f);
+        cube.transform_.translation = glm::vec3(0.0f, 0.0f, 2.5f);
         cube.transform_.scale = glm::vec3(0.5f, 0.5f, 0.5f);
 
         gameObjects_.push_back(std::move(cube));

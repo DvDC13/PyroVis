@@ -13,7 +13,7 @@ namespace Pyro
         vkDestroyPipelineLayout(device_.device(), pipelineLayout_, nullptr);
     }
 
-    void RendererSystem::renderGameObjects(VkCommandBuffer commandBuffer, const std::vector<GameObject>& gameObjects) {
+    void RendererSystem::renderGameObjects(VkCommandBuffer commandBuffer, const std::vector<GameObject>& gameObjects, const Camera& camera) {
 
         pipeline_->bind(commandBuffer);
 
@@ -21,7 +21,7 @@ namespace Pyro
             
             PushConstants push{};
             push.color = object.color_;
-            push.transform = object.transform_.mat4();
+            push.transform = camera.getProjectionMatrix() * object.transform_.mat4();
 
             vkCmdPushConstants(commandBuffer,
                             pipelineLayout_,

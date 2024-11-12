@@ -31,6 +31,8 @@ namespace Pyro
         void beginSwapChainRenderPass(VkCommandBuffer commandBuffer);
         void endSwapChainRenderPass(VkCommandBuffer commandBuffer);
 
+        float getAspectRatio() const { return swapChain_->extentAspectRatio(); }
+
         int getCurrentFrameIndex() const { return currentFrameIndex_; }
 
     private:

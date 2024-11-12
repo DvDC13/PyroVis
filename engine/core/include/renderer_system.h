@@ -4,6 +4,7 @@
 #include "device.h"
 #include "logger.h"
 #include "game_object.h"
+#include "camera.h"
 
 #include <memory>
 #include <array>
@@ -27,7 +28,7 @@ namespace Pyro
         RendererSystem(RendererSystem&&) = delete;
         RendererSystem& operator=(RendererSystem&&) = delete;
         
-        void renderGameObjects(VkCommandBuffer commandBuffer, const std::vector<GameObject>& gameObjects);
+        void renderGameObjects(VkCommandBuffer commandBuffer, const std::vector<GameObject>& gameObjects, const Camera& camera);
 
     private:
         void createPipelineLayout();
