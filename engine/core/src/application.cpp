@@ -78,6 +78,7 @@ namespace Pyro
         RendererSystem rendererSystem(device_, renderer_.getSwapChainRenderPass());
 
         Camera camera{};
+        camera.lookAtDirection(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f, 0.0f, 1.0f));
 
         while (!window_.isClosed())
         {

@@ -17,11 +17,13 @@ namespace Pyro
 
         pipeline_->bind(commandBuffer);
 
+        auto projectionView = camera.getProjectionMatrix() * camera.getViewMatrix();
+
         for (auto& object : gameObjects) { 
             
             PushConstants push{};
             push.color = object.color_;
-            push.transform = camera.getProjectionMatrix() * object.transform_.mat4();
+            push.transform =  projectionView * object.transform_.mat4();
 
             vkCmdPushConstants(commandBuffer,
                             pipelineLayout_,
