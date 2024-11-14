@@ -80,9 +80,26 @@ namespace Pyro
         Camera camera{};
         camera.lookAtDirection(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f, 0.0f, 1.0f));
 
+        auto viewerObject = GameObject::create();
+        Keyboard keyboard{};
+
+        auto currentTime = std::chrono::high_resolution_clock::now();
+
         while (!window_.isClosed())
         {
             glfwPollEvents();
+
+            auto newTime = std::chrono::high_resolution_clock::now();
+            float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
+            currentTime = newTime;
+
+            if (frameTime > 1.0f / 30.0f) {
+                frameTime = 1.0f / 30.0f;
+            }
+
+            keyboard.moveInPlaneXZ(window_.getWindow(), frameTime, viewerObject);
+
+            camera.lookAtInYXZ(viewerObject.transform_.translation, viewerObject.transform_.rotation);
 
             float aspect = renderer_.getAspectRatio();
             //camera.setOrthographicProjection(-aspect, aspect, -1.0f, 1.0f, -1.0f, 1.0f);

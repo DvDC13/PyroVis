@@ -22,6 +22,8 @@ namespace Pyro
         bool isClosed();
         bool wasWindowResized();
         void resetWindowResizedFlag();
+        
+        GLFWwindow* getWindow() const;
 
         void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
 
