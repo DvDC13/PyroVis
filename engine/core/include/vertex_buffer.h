@@ -34,6 +34,8 @@ namespace Pyro
         void bind(VkCommandBuffer commandBuffer);
         void draw(VkCommandBuffer commandBuffer);
 
+        const VkBuffer& getVertexBuffer() const { return vertexBuffer_; }
+
     private:
         Device& device_;
         VkBuffer vertexBuffer_;

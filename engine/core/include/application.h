@@ -7,6 +7,7 @@
 #include "renderer.h"
 #include "renderer_system.h"
 #include "keyboard.h"
+#include "index_buffer.h"
 
 #include <chrono>
 #include <memory>

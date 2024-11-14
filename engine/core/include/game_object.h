@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vertex_buffer.h"
+#include "index_buffer.h"
 #include <memory>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -41,6 +42,7 @@ namespace Pyro
         inline unsigned int id() const { return id_; }
 
         std::shared_ptr<VertexBuffer> vertexBuffer_{};
+        std::shared_ptr<IndexBuffer> indexBuffer_{};
         glm::vec3 color_{};
         Transform transform_{};
 

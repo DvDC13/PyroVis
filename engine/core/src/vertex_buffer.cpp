@@ -57,7 +57,7 @@ namespace Pyro
     void VertexBuffer::createVertexBuffer(const std::vector<Vertex>& vertices)
     {
         vertexCount_ = static_cast<uint32_t>(vertices.size());
-        VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
+        VkDeviceSize bufferSize = sizeof(vertices[0]) * vertexCount_;
 
         device_.createBuffer(bufferSize, 
             VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
