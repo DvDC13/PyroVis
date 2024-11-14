@@ -41,6 +41,16 @@ namespace Pyro
 
         inline unsigned int id() const { return id_; }
 
+        void bind(VkCommandBuffer commandBuffer) const
+        {
+            VkBuffer buffers[] = { vertexBuffer_->getVertexBuffer() };
+            VkDeviceSize offsets[] = { 0 };
+            vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+            
+            if (indexBuffer_ != nullptr)
+                vkCmdBindIndexBuffer(commandBuffer, indexBuffer_->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+        }
+
         std::shared_ptr<VertexBuffer> vertexBuffer_{};
         std::shared_ptr<IndexBuffer> indexBuffer_{};
         glm::vec3 color_{};

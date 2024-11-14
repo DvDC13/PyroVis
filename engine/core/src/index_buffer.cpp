@@ -2,8 +2,8 @@
 
 namespace Pyro
 {
-    IndexBuffer::IndexBuffer(Device& device, const VertexBuffer& vertexBuffer, const std::vector<uint32_t>& indices)
-        : device_(device), vertexBuffer_(vertexBuffer)
+    IndexBuffer::IndexBuffer(Device& device, const std::vector<uint32_t>& indices)
+        : device_(device)
     {
         createIndexBuffer(indices);
     }
@@ -12,14 +12,6 @@ namespace Pyro
     {
         vkDestroyBuffer(device_.device(), indexBuffer_, nullptr);
         vkFreeMemory(device_.device(), indexBufferMemory_, nullptr);
-    }
-
-    void IndexBuffer::bind(VkCommandBuffer commandBuffer)
-    {
-        VkBuffer buffers[] = { vertexBuffer_.getVertexBuffer() };
-        VkDeviceSize offsets[] = { 0 };
-        vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
-        vkCmdBindIndexBuffer(commandBuffer, indexBuffer_, 0, VK_INDEX_TYPE_UINT32);
     }
 
     void IndexBuffer::draw(VkCommandBuffer commandBuffer)

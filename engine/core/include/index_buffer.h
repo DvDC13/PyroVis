@@ -16,7 +16,7 @@ namespace Pyro
     class IndexBuffer
     {
     public:
-        IndexBuffer(Device& device, const VertexBuffer& vertexBuffer, const std::vector<uint32_t>& indices);
+        IndexBuffer(Device& device, const std::vector<uint32_t>& indices);
         ~IndexBuffer();
 
         IndexBuffer(const IndexBuffer&) = delete;
@@ -24,16 +24,15 @@ namespace Pyro
         IndexBuffer(IndexBuffer&&) = default;
         IndexBuffer& operator=(IndexBuffer&&) = default;
 
-        void bind(VkCommandBuffer commandBuffer);
         void draw(VkCommandBuffer commandBuffer);
+
+        inline const VkBuffer& getIndexBuffer() const { return indexBuffer_; }
 
     private:
         Device& device_;
         VkBuffer indexBuffer_;
         VkDeviceMemory indexBufferMemory_;
         uint32_t indexCount_;
-
-        const VertexBuffer& vertexBuffer_;
 
         void createIndexBuffer(const std::vector<uint32_t>& indices);
 

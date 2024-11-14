@@ -42,13 +42,6 @@ namespace Pyro
         vkFreeMemory(device_.device(), vertexBufferMemory_, nullptr);
     }
 
-    void VertexBuffer::bind(VkCommandBuffer commandBuffer)
-    {
-        VkBuffer buffers[] = { vertexBuffer_ };
-        VkDeviceSize offsets[] = { 0 };
-        vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
-    }
-
     void VertexBuffer::draw(VkCommandBuffer commandBuffer)
     {
         vkCmdDraw(commandBuffer, vertexCount_, 1, 0, 0);

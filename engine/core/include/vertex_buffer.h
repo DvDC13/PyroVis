@@ -31,10 +31,9 @@ namespace Pyro
         VertexBuffer(VertexBuffer&&) = default;
         VertexBuffer& operator=(VertexBuffer&&) = default;
 
-        void bind(VkCommandBuffer commandBuffer);
         void draw(VkCommandBuffer commandBuffer);
 
-        const VkBuffer& getVertexBuffer() const { return vertexBuffer_; }
+        inline const VkBuffer& getVertexBuffer() const { return vertexBuffer_; }
 
     private:
         Device& device_;
