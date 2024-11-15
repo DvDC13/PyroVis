@@ -52,15 +52,28 @@ namespace Pyro
         vertexCount_ = static_cast<uint32_t>(vertices.size());
         VkDeviceSize bufferSize = sizeof(vertices[0]) * vertexCount_;
 
+        VkBuffer stagingBuffer;
+        VkDeviceMemory stagingBufferMemory;
         device_.createBuffer(bufferSize, 
-            VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+            stagingBuffer,
+            stagingBufferMemory);
+
+        void* data;
+        vkMapMemory(device_.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
+        memcpy(data, vertices.data(), (size_t)bufferSize);
+        vkUnmapMemory(device_.device(), stagingBufferMemory);
+
+        device_.createBuffer(bufferSize,
+            VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
             vertexBuffer_,
             vertexBufferMemory_);
 
-        void* data;
-        vkMapMemory(device_.device(), vertexBufferMemory_, 0, bufferSize, 0, &data);
-        memcpy(data, vertices.data(), (size_t)bufferSize);
-        vkUnmapMemory(device_.device(), vertexBufferMemory_);
+        device_.copyBuffer(stagingBuffer, vertexBuffer_, bufferSize);
+
+        vkDestroyBuffer(device_.device(), stagingBuffer, nullptr);
+        vkFreeMemory(device_.device(), stagingBufferMemory, nullptr);
     }
 }
