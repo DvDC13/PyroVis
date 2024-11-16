@@ -13,6 +13,7 @@ include_directories(${GLFW_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/engine/utils)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/vendor/glm)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/vendor/tinyObjLoader)
 
 set(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui)
 set(IMGUI_SOURCES
