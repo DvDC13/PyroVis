@@ -2,6 +2,19 @@
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
+
+namespace std {
+    template<>
+    struct hash<Pyro::Vertex> {
+        size_t operator()(Pyro::Vertex const& vertex) const {
+            size_t seed = 0;
+            Pyro::hash_combine(seed, vertex.position, vertex.color, vertex.texCoord_uv, vertex.normal);
+            return seed;
+        }
+    };
+}
 
 namespace Pyro
 {
@@ -20,6 +33,8 @@ namespace Pyro
 
         std::vector<Vertex> vertices;
         std::vector<uint32_t> indices;
+
+        std::unordered_map<Vertex, uint32_t> uniqueVertices{};
 
         for (const auto& shape : shapes) {
             for (const auto& index : shape.mesh.indices) {
@@ -42,8 +57,12 @@ namespace Pyro
                 };
 
                 vertex.color = {1.0f, 1.0f, 1.0f};
-                vertices.push_back(vertex);
-                indices.push_back(index.vertex_index);
+
+                if (uniqueVertices.count(vertex) == 0) {
+                    uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
+                    vertices.push_back(vertex);
+                }
+                indices.push_back(uniqueVertices[vertex]);
             }
         }
 
@@ -75,7 +94,7 @@ namespace Pyro
         VkDeviceSize offsets[] = { 0 };
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
         
-        if (builder_.indexBuffer_ != nullptr)
+        if (builder_.indexBuffer_->getIndexCount() > 0)
             vkCmdBindIndexBuffer(commandBuffer, builder_.indexBuffer_->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
     }
 

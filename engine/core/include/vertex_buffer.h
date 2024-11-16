@@ -20,6 +20,10 @@ namespace Pyro
 
         static std::vector<VkVertexInputBindingDescription> getBindingDescriptions();
         static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
+
+        bool operator==(const Vertex& other) const {
+            return position == other.position && color == other.color && texCoord_uv == other.texCoord_uv && normal == other.normal;
+        }
     };
 
     class VertexBuffer

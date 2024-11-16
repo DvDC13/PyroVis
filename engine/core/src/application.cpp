@@ -13,14 +13,6 @@ namespace Pyro
 
     Application::~Application() {}
 
-    std::unique_ptr<IndexBuffer> createCubeIndexBuffer(Device& device) {
-
-        std::vector<uint32_t> indices {0,  1,  2,  0,  3,  1,  4,  5,  6,  4,  7,  5,  8,  9,  10, 8,  11, 9, 
-            12, 13, 14, 12, 15, 13, 16, 17, 18, 16, 19, 17, 20, 21, 22, 20, 23, 21 };
-
-        return std::make_unique<IndexBuffer>(device, indices);
-    }
-
     void Application::run()
     {
         RendererSystem rendererSystem(device_, renderer_.getSwapChainRenderPass());
@@ -66,15 +58,6 @@ namespace Pyro
 
     void Application::loadGameObjects()
     {
-        //std::shared_ptr<VertexBuffer> vertexBuffer = createCubeVertexBuffer(device_);
-        //std::shared_ptr<IndexBuffer> indexBuffer = createCubeIndexBuffer(device_);
-
-        // auto cube = GameObject::create();
-        // cube.builder_.vertexBuffer_ = vertexBuffer;
-        // cube.builder_.indexBuffer_ = indexBuffer;
-        // cube.transform_.translation = glm::vec3(0.0f, 0.0f, 2.5f);
-        // cube.transform_.scale = glm::vec3(0.5f, 0.5f, 0.5f);
-
         auto cup = GameObject::createObjectfromFile(device_, "../assets/models/obj/Cup.obj");
 
         cup.transform_.translation = glm::vec3(0.0f, 0.0f, 2.5f);

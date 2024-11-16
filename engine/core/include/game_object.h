@@ -1,10 +1,12 @@
 #pragma once
 
+#include "hash.h"
 #include "vertex_buffer.h"
 #include "index_buffer.h"
 
 #include <memory>
 #include <iostream>
+#include <unordered_map>
 
 #include <glm/gtc/matrix_transform.hpp>
 
