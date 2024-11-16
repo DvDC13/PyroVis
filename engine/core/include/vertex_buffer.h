@@ -13,8 +13,10 @@ namespace Pyro
 {
 
     struct Vertex {
-        glm::vec3 position;
-        glm::vec3 color;
+        glm::vec3 position{};
+        glm::vec3 color{};
+        glm::vec2 texCoord_uv{};
+        glm::vec3 normal{};
 
         static std::vector<VkVertexInputBindingDescription> getBindingDescriptions();
         static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
@@ -34,6 +36,7 @@ namespace Pyro
         void draw(VkCommandBuffer commandBuffer);
 
         inline const VkBuffer& getVertexBuffer() const { return vertexBuffer_; }
+        inline uint32_t getVertexCount() const { return vertexCount_; }
 
     private:
         Device& device_;

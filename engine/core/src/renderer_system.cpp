@@ -34,7 +34,7 @@ namespace Pyro
                             );
             
             object.bind(commandBuffer);
-            object.indexBuffer_->draw(commandBuffer);
+            object.builder_.vertexBuffer_->draw(commandBuffer);
         }
     }
 

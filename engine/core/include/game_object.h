@@ -2,7 +2,9 @@
 
 #include "vertex_buffer.h"
 #include "index_buffer.h"
+
 #include <memory>
+#include <iostream>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -26,38 +28,35 @@ namespace Pyro
         }
     };
 
+    struct Builder
+    {
+        std::shared_ptr<VertexBuffer> vertexBuffer_{};
+        std::shared_ptr<IndexBuffer> indexBuffer_{};
+
+        void loadModel(Device& device, const std::string& filepath);
+    };
+
     class GameObject
     {
     public:
-        static GameObject create() { 
-            static unsigned int curr = 0;
-            return GameObject(curr++);
-        }
+        static GameObject createObject();
+        static GameObject createObjectfromFile(Device& device, const std::string& filepath);
 
         GameObject(const GameObject& other) = delete;
         GameObject& operator=(const GameObject& other) = delete;
         GameObject(GameObject&& other) = default;
         GameObject& operator=(GameObject&& other) = default;
 
-        inline unsigned int id() const { return id_; }
+        unsigned int id() const;
 
-        void bind(VkCommandBuffer commandBuffer) const
-        {
-            VkBuffer buffers[] = { vertexBuffer_->getVertexBuffer() };
-            VkDeviceSize offsets[] = { 0 };
-            vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
-            
-            if (indexBuffer_ != nullptr)
-                vkCmdBindIndexBuffer(commandBuffer, indexBuffer_->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-        }
+        void bind(VkCommandBuffer commandBuffer) const;
 
-        std::shared_ptr<VertexBuffer> vertexBuffer_{};
-        std::shared_ptr<IndexBuffer> indexBuffer_{};
         glm::vec3 color_{};
         Transform transform_{};
+        Builder builder_{};
 
     private:
-        GameObject(unsigned int id) : id_(id) {}
+        GameObject(unsigned int id);
 
         unsigned int id_ = 0;
     };

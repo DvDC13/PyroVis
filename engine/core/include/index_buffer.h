@@ -27,6 +27,7 @@ namespace Pyro
         void draw(VkCommandBuffer commandBuffer);
 
         inline const VkBuffer& getIndexBuffer() const { return indexBuffer_; }
+        inline uint32_t getIndexCount() const { return indexCount_; }
 
     private:
         Device& device_;
