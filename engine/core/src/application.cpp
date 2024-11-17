@@ -58,8 +58,9 @@ namespace Pyro
 
     void Application::loadGameObjects()
     {
-        auto cup = GameObject::createObjectfromFile(device_, "../assets/models/obj/Cup.obj");
-
+        auto cupMesh = Mesh::createMeshFromFile(device_, "../assets/models/obj/Cup.obj");
+        auto cup = GameObject::createObject();
+        cup.mesh_ = cupMesh;
         cup.transform_.translation = glm::vec3(0.0f, 0.0f, 2.5f);
         cup.transform_.scale = glm::vec3(0.2f, 0.2f, 0.2f);
         cup.transform_.rotation.x = glm::pi<float>();

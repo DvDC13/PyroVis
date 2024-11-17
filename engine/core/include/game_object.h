@@ -1,12 +1,8 @@
 #pragma once
 
-#include "hash.h"
-#include "vertex_buffer.h"
-#include "index_buffer.h"
+#include "mesh.h"
 
 #include <memory>
-#include <iostream>
-#include <unordered_map>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -30,19 +26,10 @@ namespace Pyro
         }
     };
 
-    struct Builder
-    {
-        std::shared_ptr<VertexBuffer> vertexBuffer_{};
-        std::shared_ptr<IndexBuffer> indexBuffer_{};
-
-        void loadModel(Device& device, const std::string& filepath);
-    };
-
     class GameObject
     {
     public:
         static GameObject createObject();
-        static GameObject createObjectfromFile(Device& device, const std::string& filepath);
 
         GameObject(const GameObject& other) = delete;
         GameObject& operator=(const GameObject& other) = delete;
@@ -51,11 +38,9 @@ namespace Pyro
 
         unsigned int id() const;
 
-        void bind(VkCommandBuffer commandBuffer) const;
-
         glm::vec3 color_{};
         Transform transform_{};
-        Builder builder_{};
+        std::shared_ptr<Mesh> mesh_{};
 
     private:
         GameObject(unsigned int id);

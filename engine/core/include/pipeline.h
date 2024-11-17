@@ -6,7 +6,7 @@
 #include <iostream>
 #include <cassert>
 
-#include "vertex_buffer.h"
+#include "mesh.h"
 #include "device.h"
 
 namespace Pyro
