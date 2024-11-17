@@ -22,8 +22,9 @@ namespace Pyro
         for (auto& object : gameObjects) { 
             
             PushConstants push{};
-            push.color = object.color_;
-            push.transform =  projectionView * object.transform_.mat4();
+            auto modelMatrix = object.transform_.mat4();
+            push.transform =  projectionView * modelMatrix;
+            push.modelMatrix = modelMatrix;
 
             vkCmdPushConstants(commandBuffer,
                             pipelineLayout_,
