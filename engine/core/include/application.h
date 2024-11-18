@@ -24,7 +24,10 @@ namespace Pyro
     struct Ubo
     {
         alignas(16) glm::mat4 projectionViewMatrix{1.0f};
-        alignas(16) glm::vec3 lightDirection = glm::normalize(glm::vec3(1.0f, -3.0f, -1.0f));
+        glm::vec4 ambiantLightColor = glm::vec4(1.0f, 1.0f, 1.0f, 0.02f);
+        glm::vec3 lightPosition = glm::vec3(-1.0f, -1.0f, -1.0f);
+        uint32_t padding;
+        alignas(16) glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     };
 
     class Application
