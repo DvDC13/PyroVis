@@ -8,6 +8,10 @@ namespace Pyro
         Logger logger;
         logger.log(Logger::LogLevel::INFO, "Application started");
 
+        descriptorPool_ = DescriptorPool::Builder(device_)
+            .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
+            .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
+            .build();
         loadGameObjects();
     }
 
@@ -23,7 +27,19 @@ namespace Pyro
             uniformBuffers[i]->map();
         }
 
-        RendererSystem rendererSystem(device_, renderer_.getSwapChainRenderPass());
+        auto descriptorSetLayout = DescriptorSetLayout::Builder(device_)
+            .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
+            .build();
+
+        std::vector<VkDescriptorSet> descriptorSets(SwapChain::MAX_FRAMES_IN_FLIGHT);
+        for (size_t i = 0; i < SwapChain::MAX_FRAMES_IN_FLIGHT; i++) {
+            auto bufferInfo = uniformBuffers[i]->descriptorInfo();
+            DescriptorWriter(*descriptorSetLayout, *descriptorPool_)
+            .writeBuffer(0, &bufferInfo)
+            .build(descriptorSets[i]);
+        }
+
+        RendererSystem rendererSystem(device_, renderer_.getSwapChainRenderPass(), descriptorSetLayout->getDescriptorSetLayout());
 
         Camera camera{};
         camera.lookAtDirection(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f, 0.0f, 1.0f));
@@ -62,6 +78,7 @@ namespace Pyro
                     frameTime,
                     commandBuffer,
                     camera,
+                    descriptorSets[frameIndex]
                 };
 
                 Ubo ubo{};

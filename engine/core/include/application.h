@@ -8,6 +8,7 @@
 #include "renderer_system.h"
 #include "keyboard.h"
 #include "mesh.h"
+#include "descriptor.h"
 
 #include <chrono>
 #include <memory>
@@ -20,11 +21,10 @@
 
 namespace Pyro
 {
-
     struct Ubo
     {
-        glm::mat4 projectionViewMatrix{1.0f};
-        glm::vec3 lightDirection = glm::normalize(glm::vec3(1.0f, -3.0f, -1.0f));
+        alignas(16) glm::mat4 projectionViewMatrix{1.0f};
+        alignas(16) glm::vec3 lightDirection = glm::normalize(glm::vec3(1.0f, -3.0f, -1.0f));
     };
 
     class Application
@@ -46,6 +46,7 @@ namespace Pyro
         Window window_{WIDTH, HEIGHT, "PyroVis"};
         Device device_{window_};
         Renderer renderer_{window_, device_};
+        std::unique_ptr<DescriptorPool> descriptorPool_{};
         std::vector<GameObject> gameObjects_;
     };
 }

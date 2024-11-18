@@ -9,4 +9,5 @@ target_sources(engine PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/core/src/camera.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/src/game_object.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/src/buffer.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/src/mesh.cpp)
+    ${CMAKE_CURRENT_LIST_DIR}/core/src/mesh.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/src/descriptor.cpp)

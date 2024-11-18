@@ -2,9 +2,9 @@
 
 namespace Pyro
 {
-    RendererSystem::RendererSystem(Device& device, VkRenderPass renderPass) : device_(device)
+    RendererSystem::RendererSystem(Device& device, VkRenderPass renderPass, VkDescriptorSetLayout descriptorSetLayout) : device_(device)
     {
-        createPipelineLayout();
+        createPipelineLayout(descriptorSetLayout);
         createPipeline(renderPass);
     }
 
@@ -17,13 +17,19 @@ namespace Pyro
 
         pipeline_->bind(frameInfo.commandBuffer);
 
-        auto projectionView = frameInfo.camera.getProjectionMatrix() * frameInfo.camera.getViewMatrix();
+        vkCmdBindDescriptorSets(frameInfo.commandBuffer,
+                                VK_PIPELINE_BIND_POINT_GRAPHICS,
+                                pipelineLayout_,
+                                0,
+                                1,
+                                &frameInfo.descriptorSet,
+                                0,
+                                nullptr);
 
         for (auto& object : gameObjects) { 
             
             PushConstants push{};
             auto modelMatrix = object.transform_.mat4();
-            push.transform =  projectionView * modelMatrix;
             push.modelMatrix = modelMatrix;
 
             vkCmdPushConstants(frameInfo.commandBuffer,
@@ -39,16 +45,18 @@ namespace Pyro
         }
     }
 
-    void RendererSystem::createPipelineLayout() {
+    void RendererSystem::createPipelineLayout(VkDescriptorSetLayout descriptorSetLayout) {
         VkPushConstantRange pushConstantRange{};
         pushConstantRange.size = sizeof(PushConstants);
         pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
         pushConstantRange.offset = 0;
 
+        std::vector<VkDescriptorSetLayout> descriptorSetLayouts{ descriptorSetLayout };
+
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        pipelineLayoutInfo.setLayoutCount = 0;
-        pipelineLayoutInfo.pSetLayouts = nullptr;
+        pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
+        pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
         pipelineLayoutInfo.pushConstantRangeCount = 1;
         pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 

@@ -16,18 +16,18 @@ namespace Pyro
         float frameTime;
         VkCommandBuffer commandBuffer;
         Camera& camera;
+        VkDescriptorSet descriptorSet;
     };
 
     struct PushConstants
     {
-        glm::mat4 transform{1.0f};
         glm::mat4 modelMatrix{1.0f};
     };
 
     class RendererSystem
     {
     public:
-        RendererSystem(Device& device, VkRenderPass renderPass);
+        RendererSystem(Device& device, VkRenderPass renderPass, VkDescriptorSetLayout descriptorSetLayout);
         ~RendererSystem();
 
         RendererSystem(const RendererSystem&) = delete;
@@ -38,7 +38,7 @@ namespace Pyro
         void renderGameObjects(FrameInfo& frameInfo, const std::vector<GameObject>& gameObjects);
 
     private:
-        void createPipelineLayout();
+        void createPipelineLayout(VkDescriptorSetLayout descriptorSetLayout);
         void createPipeline(VkRenderPass renderPass);
 
         Device& device_;
