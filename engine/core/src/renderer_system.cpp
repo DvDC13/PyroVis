@@ -13,11 +13,11 @@ namespace Pyro
         vkDestroyPipelineLayout(device_.device(), pipelineLayout_, nullptr);
     }
 
-    void RendererSystem::renderGameObjects(VkCommandBuffer commandBuffer, const std::vector<GameObject>& gameObjects, const Camera& camera) {
+    void RendererSystem::renderGameObjects(FrameInfo& frameInfo, const std::vector<GameObject>& gameObjects) {
 
-        pipeline_->bind(commandBuffer);
+        pipeline_->bind(frameInfo.commandBuffer);
 
-        auto projectionView = camera.getProjectionMatrix() * camera.getViewMatrix();
+        auto projectionView = frameInfo.camera.getProjectionMatrix() * frameInfo.camera.getViewMatrix();
 
         for (auto& object : gameObjects) { 
             
@@ -26,7 +26,7 @@ namespace Pyro
             push.transform =  projectionView * modelMatrix;
             push.modelMatrix = modelMatrix;
 
-            vkCmdPushConstants(commandBuffer,
+            vkCmdPushConstants(frameInfo.commandBuffer,
                             pipelineLayout_,
                             VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
                             0,
@@ -34,8 +34,8 @@ namespace Pyro
                             &push
                             );
             
-            object.mesh_->bind(commandBuffer);
-            object.mesh_->draw(commandBuffer);
+            object.mesh_->bind(frameInfo.commandBuffer);
+            object.mesh_->draw(frameInfo.commandBuffer);
         }
     }
 

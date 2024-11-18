@@ -11,6 +11,13 @@
 
 namespace Pyro
 {
+    struct FrameInfo {
+        int frameIndex;
+        float frameTime;
+        VkCommandBuffer commandBuffer;
+        Camera& camera;
+    };
+
     struct PushConstants
     {
         glm::mat4 transform{1.0f};
@@ -28,7 +35,7 @@ namespace Pyro
         RendererSystem(RendererSystem&&) = delete;
         RendererSystem& operator=(RendererSystem&&) = delete;
         
-        void renderGameObjects(VkCommandBuffer commandBuffer, const std::vector<GameObject>& gameObjects, const Camera& camera);
+        void renderGameObjects(FrameInfo& frameInfo, const std::vector<GameObject>& gameObjects);
 
     private:
         void createPipelineLayout();

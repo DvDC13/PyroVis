@@ -15,6 +15,14 @@ namespace Pyro
 
     void Application::run()
     {
+        std::vector<std::unique_ptr<Buffer>> uniformBuffers(SwapChain::MAX_FRAMES_IN_FLIGHT);
+        for (int i = 0; i < SwapChain::MAX_FRAMES_IN_FLIGHT; i++) {
+            uniformBuffers[i] = std::make_unique<Buffer>(device_, sizeof(Ubo), 1,
+            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+            uniformBuffers[i]->map();
+        }
+
         RendererSystem rendererSystem(device_, renderer_.getSwapChainRenderPass());
 
         Camera camera{};
@@ -46,8 +54,23 @@ namespace Pyro
             camera.setPerspectiveProjection(50.0f, aspect, 0.1f, 10.0f);
             
             if (auto commandBuffer = renderer_.beginFrame()) {
+
+                int frameIndex = renderer_.getCurrentFrameIndex();
+
+                FrameInfo frameInfo{
+                    frameIndex,
+                    frameTime,
+                    commandBuffer,
+                    camera,
+                };
+
+                Ubo ubo{};
+                ubo.projectionViewMatrix = camera.getProjectionMatrix() * camera.getViewMatrix();
+                uniformBuffers[frameIndex]->writeToBuffer(&ubo);
+                uniformBuffers[frameIndex]->flush();
+
                 renderer_.beginSwapChainRenderPass(commandBuffer);
-                rendererSystem.renderGameObjects(commandBuffer, gameObjects_, camera);
+                rendererSystem.renderGameObjects(frameInfo, gameObjects_);
                 renderer_.endSwapChainRenderPass(commandBuffer);
                 renderer_.endFrame();
             }

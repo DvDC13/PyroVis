@@ -20,6 +20,13 @@
 
 namespace Pyro
 {
+
+    struct Ubo
+    {
+        glm::mat4 projectionViewMatrix{1.0f};
+        glm::vec3 lightDirection = glm::normalize(glm::vec3(1.0f, -3.0f, -1.0f));
+    };
+
     class Application
     {
     public:
