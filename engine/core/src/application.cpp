@@ -11,6 +11,8 @@ namespace Pyro
         descriptorPool_ = DescriptorPool::Builder(device_)
             .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
             .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
+            .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, SwapChain::MAX_FRAMES_IN_FLIGHT * 2)
+            .setPoolFlags(VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT)
             .build();
         loadGameObjects();
     }
@@ -47,6 +49,29 @@ namespace Pyro
         auto viewerObject = GameObject::createObject();
         Keyboard keyboard{};
 
+        // IMGUI
+        ImGui::CreateContext();
+        ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+        ImGui::StyleColorsDark();
+
+        ImGui_ImplGlfw_InitForVulkan(window_.getWindow(), true);
+        ImGui_ImplVulkan_InitInfo init_info = {};
+        init_info.Instance = device_.instance();
+        init_info.PhysicalDevice = device_.physicalDevice();
+        init_info.Device = device_.device();
+        init_info.Queue = device_.graphicsQueue();
+        init_info.RenderPass = renderer_.getSwapChainRenderPass();
+        init_info.DescriptorPool = descriptorPool_->getDescriptorPool();
+        init_info.ImageCount = SwapChain::MAX_FRAMES_IN_FLIGHT;
+        init_info.MinImageCount = SwapChain::MAX_FRAMES_IN_FLIGHT;
+        ImGui_ImplVulkan_Init(&init_info);
+
+        VkCommandBuffer commandBuffer = device_.beginSingleTimeCommands();
+        ImGui_ImplVulkan_CreateFontsTexture();
+        device_.endSingleTimeCommands(commandBuffer);
+        vkDeviceWaitIdle(device_.device());
+        ImGui_ImplVulkan_DestroyFontsTexture();
+
         auto currentTime = std::chrono::high_resolution_clock::now();
 
         while (!window_.isClosed())
@@ -69,9 +94,14 @@ namespace Pyro
             //camera.setOrthographicProjection(-aspect, aspect, -1.0f, 1.0f, -1.0f, 1.0f);
             camera.setPerspectiveProjection(50.0f, aspect, 0.1f, 10.0f);
             
-            if (auto commandBuffer = renderer_.beginFrame()) {
+            int frameIndex = renderer_.getCurrentFrameIndex();
 
-                int frameIndex = renderer_.getCurrentFrameIndex();
+            Ubo ubo{};
+            ubo.projectionViewMatrix = camera.getProjectionMatrix() * camera.getViewMatrix();
+            uniformBuffers[frameIndex]->writeToBuffer(&ubo);
+            uniformBuffers[frameIndex]->flush();
+
+            if (auto commandBuffer = renderer_.beginFrame()) {
 
                 FrameInfo frameInfo{
                     frameIndex,
@@ -81,11 +111,6 @@ namespace Pyro
                     descriptorSets[frameIndex]
                 };
 
-                Ubo ubo{};
-                ubo.projectionViewMatrix = camera.getProjectionMatrix() * camera.getViewMatrix();
-                uniformBuffers[frameIndex]->writeToBuffer(&ubo);
-                uniformBuffers[frameIndex]->flush();
-
                 renderer_.beginSwapChainRenderPass(commandBuffer);
                 rendererSystem.renderGameObjects(frameInfo, gameObjects_);
                 renderer_.endSwapChainRenderPass(commandBuffer);
@@ -94,6 +119,10 @@ namespace Pyro
         }
 
         vkDeviceWaitIdle(device_.device());
+
+        ImGui_ImplVulkan_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
     }
 
     void Application::loadGameObjects()

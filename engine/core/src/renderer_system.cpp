@@ -42,6 +42,15 @@ namespace Pyro
             
             object.mesh_->bind(frameInfo.commandBuffer);
             object.mesh_->draw(frameInfo.commandBuffer);
+
+            ImGui_ImplVulkan_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
+            ImGui::ShowDemoWindow();
+
+            ImGui::Render();
+            ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), frameInfo.commandBuffer);
         }
     }
 

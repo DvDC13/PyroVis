@@ -85,11 +85,12 @@ DescriptorPool::DescriptorPool(
     VkDescriptorPoolCreateFlags poolFlags,
     const std::vector<VkDescriptorPoolSize> &poolSizes)
     : device_{device} {
+
   VkDescriptorPoolCreateInfo descriptorPoolInfo{};
   descriptorPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
   descriptorPoolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
   descriptorPoolInfo.pPoolSizes = poolSizes.data();
-  descriptorPoolInfo.maxSets = maxSets;
+  descriptorPoolInfo.maxSets = maxSets * 2;
   descriptorPoolInfo.flags = poolFlags;
  
   if (vkCreateDescriptorPool(device_.device(), &descriptorPoolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {

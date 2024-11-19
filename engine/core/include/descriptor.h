@@ -6,7 +6,8 @@
 #include <unordered_map>
 #include <vector>
 #include <cassert>
- 
+#include <array>
+
 namespace Pyro {
  
 class DescriptorSetLayout {
@@ -78,6 +79,7 @@ class DescriptorPool {
   void resetPool();
   
   Device& getDevice() { return device_; }
+  VkDescriptorPool getDescriptorPool() const { return descriptorPool; }
  
  private:
   Device &device_;

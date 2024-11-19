@@ -30,7 +30,9 @@ class Device {
   Device(Device &&) = delete;
   Device &operator=(Device &&) = delete;
 
-  VkCommandPool getCommandPool() { return commandPool_; }
+  VkInstance instance() { return instance_; }
+  VkPhysicalDevice physicalDevice() { return physicalDevice_; }
+  VkCommandPool commandPool() { return commandPool_; }
   VkDevice device() { return device_; }
   VkSurfaceKHR surface() { return surface_; }
   VkQueue graphicsQueue() { return graphicsQueue_; }
